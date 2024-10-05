@@ -27,7 +27,7 @@ from the `cmd`, the algorithms and connection to Redis reside in the
 `internal` package. The project follows SOLID principles to enable users
 to easily extend the functionalities such as connecting to other DBs, adding
 new algorithms, etc. Additionally, the app enjoys circuit breaker pattern
-to avoid error cascading.
+to avoid error cascading. Plus, to control 
 
 In the `internal` directory, there are `config` for essential configs of
 the app like port, `limiter` which contains the logic of handling, checking,
@@ -40,8 +40,8 @@ unit tests for both sliding window and leaky bucket.
 Apart from that, there is a `limiter_test` containing a banchmark test for 
 the application.
 
-This stateless system can easily be replicated and has no worries of lock and
-race condition as these concerns must be handled by its database, Redis. The
+This stateless system can easily be replicated and it employs `distributed 
+locking` based on the `userID` to handle concurrency. The
 app includes a RedisInterface to be extended by different detailed implementations.
 The app contains `RedisClient` and `MockRedisClient`, but a Redis cluster
 connector can easily be added to the program as well.
@@ -53,7 +53,6 @@ heavy loads. Therefore, adding a cluster connector, which is very similar to
 the current RedisClient except having a list of nodes and balancing between
 them by, for example, a hash-based algorithm, is needed. 
 
-Another 
 
 ## Notes
 The users can run replicates of this application without any problem to 
