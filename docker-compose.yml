@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  ratelimiter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_ADDR=localhost:6379
+      - SERVER_PORT=8080
+      - FAILURE_THRESHOLD=3
+      - CB_TIMEOUT=5
+      - LOCK_TIME=5
+    ports:
+      - "8080:8080"
+    links:
+      - redis
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:latest
+    container_name: redis_db
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - /data/cache:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
